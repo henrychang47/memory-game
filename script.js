@@ -90,8 +90,8 @@ class Card {
 
 const gameStatus = {
   PLAYER_ACTIVE: false,
-  MEMORY_TIME: 10,
-  PAIRING_TIME: 30,
+  MEMORY_TIME: 5,
+  PAIRING_TIME: 10,
   FIRST_SELECTED: null,
   SECOND_SELECTED: null,
 
@@ -112,7 +112,6 @@ const gameController = {
 
     this.startMemory();
     this.setTiming(gameStatus.MEMORY_TIME, this.startPairing);
-    this.setTiming(gameStatus.PAIRING_TIME,);
   },
 
   setTiming: function (second, callback) {
@@ -124,7 +123,7 @@ const gameController = {
     }, 1000);
 
     setTimeout(() => {
-      callback.call();
+      callback.call(this);
       clearInterval(counter);
     }, second * 1000);
   },
@@ -135,25 +134,31 @@ const gameController = {
 
   startPairing: function () {
     gameStatus.PLAYER_ACTIVE = true;
+    cardController.hideAllCards();
+
+    this.setTiming(gameStatus.PAIRING_TIME, this.timeUP);
 
     console.log('start Pairing!');
   },
 
   timeUP: function () {
-
+    gameStatus.PLAYER_ACTIVE = false;
     console.log('time up!');
   },
 
   select: function (card) {
+    if (!gameStatus.PLAYER_ACTIVE) return;
+    if (!card.element.classList.value) return;// card been paired
+
     if (!gameStatus.FIRST_SELECTED) {
       gameStatus.FIRST_SELECTED = card;
-      console.log('first select:', card.type);
+      card.element.classList.remove('hide');
       return;
     }
 
     if (!gameStatus.SECOND_SELECTED) {
       gameStatus.SECOND_SELECTED = card;
-      console.log('second select:', card.type);
+      card.element.classList.remove('hide');
 
       this.checkPair();
     }
@@ -161,12 +166,19 @@ const gameController = {
 
   checkPair: function () {
     if (gameStatus.checkSameType()) {
-      console.log('same!');
+      setTimeout(() => {
+        gameStatus.FIRST_SELECTED.element.classList = '';
+        gameStatus.SECOND_SELECTED.element.classList = '';
+        gameStatus.clearSelect();
+      }, 500);
     } else {
-      console.log('not same!');
-    }
+      setTimeout(() => {
+        gameStatus.FIRST_SELECTED.element.classList.add('hide');
+        gameStatus.SECOND_SELECTED.element.classList.add('hide');
+        gameStatus.clearSelect();
+      }, 500);
 
-    gameStatus.clearSelect();
+    }
   },
 
 }
