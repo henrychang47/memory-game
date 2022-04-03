@@ -3,12 +3,16 @@ const timer = document.querySelector('.timer');
 
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
+const levelData = [
+  { row: 2, column: 2, cardHeight: 200, cardWidth: 180, },
+  { row: 4, column: 4, cardHeight: 200, cardWidth: 180, }
+];
+
 const cardController = {
-  cardHeight: 200,
-  cardWidth: 180,
   cardStack: [],
 
-  createCards: function (row = 4, column = 4) {
+  createCards: function (row, column) {
+
     for (let i = 0; i < row * column; i++) {
       let newCard = new Card(cardTypes[parseInt(i / 2)]);
 
@@ -92,6 +96,7 @@ const gameStatus = {
   PLAYER_ACTIVE: false,
   MEMORY_TIME: 5,
   PAIRING_TIME: 10,
+  CURRENT_LEVEL: 0,
   FIRST_SELECTED: null,
   SECOND_SELECTED: null,
 
@@ -108,10 +113,24 @@ const gameStatus = {
 
 const gameController = {
   startGame: function () {
+    let { row, column, cardHeight, cardWidth, } = levelData[gameStatus.CURRENT_LEVEL]
+
+    this.setCardArea(row, column, cardHeight, cardWidth);
+
+    cardController.createCards(row, column);
     cardController.showAllCards();
 
     this.startMemory();
     this.setTiming(gameStatus.MEMORY_TIME, this.startPairing);
+  },
+
+  setCardArea: function (row, column, height, width) {
+    let style = document.documentElement.style;
+
+    style.setProperty("--row", row);
+    style.setProperty("--column", column);
+    style.setProperty("--cardWidth", `${width}px`);
+    style.setProperty("--cardHeight", `${height}px`);
   },
 
   setTiming: function (second, callback) {
@@ -192,7 +211,6 @@ const gameController = {
 
 
 window.onload = function () {
-  //document.documentElement.style.setProperty("--cardWidth", "40px");
-  cardController.createCards();
+  //cardController.createCards();
   gameController.startGame();
 };

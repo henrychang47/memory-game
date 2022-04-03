@@ -1,4 +1,6 @@
 :root {
+  --row: 4;
+  --column: 4;
   --cardHeight: 200px;
   --cardWidth: 180px;
 }
@@ -16,23 +18,32 @@ body {
   justify-content: center;
 }
 
-.title {
+.side-bar {
   position: absolute;
+  width: 100vw;
   top: 30px;
-  left: 30px;
-  font-size: 70px;
+  display: flex;
+  font-size: 6rem;
+  justify-content: space-between;
 }
 
-.timer {
-  position: absolute;
-  top: 30px;
-  font-size: 70px;
+.title {
+  margin-left: 30px;
+}
+
+.timer {}
+
+.message {
+  width: 10vw;
+  margin-right: 30px;
 }
 
 .cardsArea {
+  position: relative;
+  top: 30px;
   display: grid;
-  grid-template-columns: repeat(4, var(--cardWidth));
-  grid-template-rows: repeat(4, var(--cardHeight));
+  grid-template-columns: repeat(var(--column), var(--cardWidth));
+  grid-template-rows: repeat(var(--row), var(--cardHeight));
   gap: 20px 30px;
 }
 
