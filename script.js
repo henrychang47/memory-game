@@ -1,5 +1,5 @@
 const cardsArea = document.querySelector('.cardsArea');
-const timer = document.querySelector('.timer');
+const timeText = document.querySelector('.timer');
 const message = document.querySelector('.message');
 
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
@@ -49,13 +49,15 @@ const cardController = {
     this.cardStack.forEach(card => {
       card.flip('hide');
     });
-  }
+  },
+
 }
 
 class Card {
   constructor(type) {
     this.type = type;
     this.show = false;
+    this.removed = false;
     this.element = this.createCardElement();
   }
 
@@ -113,6 +115,7 @@ const gameStatus = {
 }
 
 const gameController = {
+
   startGame: function () {
     let { row, column, cardHeight, cardWidth, } = levelData[gameStatus.CURRENT_LEVEL]
 
@@ -123,7 +126,6 @@ const gameController = {
     cardController.showAllCards();
 
     this.startMemory();
-    this.setTiming(gameStatus.MEMORY_TIME, this.startPairing);
   },
 
   setCardArea: function (row, column, height, width) {
@@ -135,36 +137,46 @@ const gameController = {
     style.setProperty("--cardHeight", `${height}px`);
   },
 
-  setTiming: function (second, callback) {
-    let count = second;
-    timer.innerText = second;
+  setTimer: function (second, callback) {
 
-    let counter = setInterval(() => {
-      timer.innerText = --count;
+    let count = second;
+    timeText.innerText = second;
+
+    let intervalId = secondsTimer = setInterval(() => {
+      timeText.innerText = --count;
     }, 1000);
 
-    setTimeout(() => {
+    let timeoutId = setTimeout(() => {
       callback.call(this);
-      clearInterval(counter);
+      clearInterval(intervalId);
     }, second * 1000);
+
+    gameStatus.intervalId = intervalId;
+    gameStatus.timeoutId = timeoutId;
+  },
+
+  clearTimer: function () {
+    clearInterval(gameStatus.intervalId);
+    clearTimeout(gameStatus.timeoutId);
   },
 
   startMemory: function () {
     console.log('start Memory!');
+    this.setTimer(gameStatus.MEMORY_TIME, this.startPairing);
   },
 
   startPairing: function () {
     gameStatus.PLAYER_ACTIVE = true;
     cardController.hideAllCards();
 
-    this.setTiming(gameStatus.PAIRING_TIME, this.timeUP);
+    this.setTimer(gameStatus.PAIRING_TIME, this.timeUP);
 
     console.log('start Pairing!');
   },
 
   timeUP: function () {
     gameStatus.PLAYER_ACTIVE = false;
-    timer.style.color = 'red';
+    timeText.style.color = 'red';
 
     setTimeout(() => {
       cardController.showAllCards();
@@ -195,11 +207,16 @@ const gameController = {
   checkPair: function () {
     if (gameStatus.checkSameType()) {
       sounds.play('correct');
+
+      gameStatus.FIRST_SELECTED.removed = true;
+      gameStatus.SECOND_SELECTED.removed = true;
       setTimeout(() => {
         gameStatus.FIRST_SELECTED.element.classList = '';
         gameStatus.SECOND_SELECTED.element.classList = '';
         gameStatus.clearSelect();
       }, 500);
+
+      this.checkFinish();
     } else {
       sounds.play('wrong');
       setTimeout(() => {
@@ -207,8 +224,35 @@ const gameController = {
         gameStatus.SECOND_SELECTED.element.classList.add('hide');
         gameStatus.clearSelect();
       }, 500);
-
     }
+
+  },
+
+  checkFinish: function () {
+    let finish = true;
+    cardController.cardStack.forEach(card => {
+      if (!card.removed) {
+        finish = false;
+      }
+    });
+
+    if (finish) {
+      this.endGame();
+    }
+  },
+
+  endGame: function () {
+    cardController.cardStack = [];
+    cardsArea.innerHTML = "";
+    gameController.clearTimer();
+    gameStatus.PLAYER_ACTIVE = false;
+    timeText.innerText = '';
+
+    if (gameStatus.CURRENT_LEVEL < 1) {
+      gameStatus.CURRENT_LEVEL++;
+    }
+
+    gameController.startGame();
   },
 
 }
@@ -228,6 +272,5 @@ const setMessage = function (msg) {
 
 
 window.onload = function () {
-  //cardController.createCards();
   gameController.startGame();
 };
