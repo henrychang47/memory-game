@@ -1,0 +1,82 @@
+:root {
+  --cardHeight: 200px;
+  --cardWidth: 180px;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-size: 70px;
+}
+
+.timer {
+  position: absolute;
+  top: 30px;
+  font-size: 70px;
+}
+
+.cardsArea {
+  display: grid;
+  grid-template-columns: repeat(4, var(--cardWidth));
+  grid-template-rows: repeat(4, var(--cardHeight));
+  gap: 20px 30px;
+}
+
+.card {
+  background-color: skyblue;
+  height: var(--cardHeight);
+  width: var(--cardWidth);
+  border: 1px solid black;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.card.hide {
+  background: linear-gradient(#e66465, #9198e5);
+}
+
+.heart {
+  background-image: url(./img/heart.png);
+}
+
+.blur {
+  background-image: url(./img/blur.png);
+}
+
+.bar {
+  background-image: url(./img/bar.png);
+}
+
+.pet {
+  background-image: url(./img/pet.png);
+}
+
+.pokemon {
+  background-image: url(./img/pokemon.png);
+}
+
+.chair {
+  background-image: url(./img/chair.png);
+}
+
+.star {
+  background-image: url(./img/star.png);
+}
+
+.puzzle {
+  background-image: url(./img/puzzle.png);
+}
