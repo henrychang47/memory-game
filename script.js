@@ -143,12 +143,19 @@ const gameController = {
 
   timeUP: function () {
     gameStatus.PLAYER_ACTIVE = false;
+    timer.style.color = 'red';
+
+    setTimeout(() => {
+      cardController.showAllCards();
+    }, 500);
+
     console.log('time up!');
   },
 
   select: function (card) {
     if (!gameStatus.PLAYER_ACTIVE) return;
     if (!card.element.classList.value) return;// card been paired
+    if (gameStatus.FIRST_SELECTED === card) return; // avoid self paired
 
     if (!gameStatus.FIRST_SELECTED) {
       gameStatus.FIRST_SELECTED = card;
