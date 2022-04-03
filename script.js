@@ -1,5 +1,6 @@
 const cardsArea = document.querySelector('.cardsArea');
 const timer = document.querySelector('.timer');
+const message = document.querySelector('.message');
 
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
@@ -115,6 +116,7 @@ const gameController = {
   startGame: function () {
     let { row, column, cardHeight, cardWidth, } = levelData[gameStatus.CURRENT_LEVEL]
 
+    setMessage('LEVEL ' + gameStatus.CURRENT_LEVEL);
     this.setCardArea(row, column, cardHeight, cardWidth);
 
     cardController.createCards(row, column);
@@ -218,6 +220,10 @@ const sounds = {
     if (type === 'correct') this.correctSound.play();
     if (type === 'wrong') this.wrongSound.play();
   }
+}
+
+const setMessage = function (msg) {
+  message.innerText = msg;
 }
 
 

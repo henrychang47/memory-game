@@ -18,7 +18,7 @@ body {
   justify-content: center;
 }
 
-.side-bar {
+.infos {
   position: absolute;
   width: 100vw;
   top: 30px;
@@ -34,7 +34,6 @@ body {
 .timer {}
 
 .message {
-  width: 10vw;
   margin-right: 30px;
 }
 
