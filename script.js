@@ -192,12 +192,14 @@ const gameController = {
 
   checkPair: function () {
     if (gameStatus.checkSameType()) {
+      sounds.play('correct');
       setTimeout(() => {
         gameStatus.FIRST_SELECTED.element.classList = '';
         gameStatus.SECOND_SELECTED.element.classList = '';
         gameStatus.clearSelect();
       }, 500);
     } else {
+      sounds.play('wrong');
       setTimeout(() => {
         gameStatus.FIRST_SELECTED.element.classList.add('hide');
         gameStatus.SECOND_SELECTED.element.classList.add('hide');
@@ -207,6 +209,15 @@ const gameController = {
     }
   },
 
+}
+
+const sounds = {
+  correctSound: new Audio('./sound/correct.mp3'),
+  wrongSound: new Audio('./sound/wrong.mp3'),
+  play: function (type) {
+    if (type === 'correct') this.correctSound.play();
+    if (type === 'wrong') this.wrongSound.play();
+  }
 }
 
 
