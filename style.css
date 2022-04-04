@@ -59,6 +59,28 @@ body {
   align-items: center;
 }
 
+button.startButton {
+  justify-self: center;
+  color: black;
+  background-color: white;
+  padding: 20px;
+  border: 10px solid black;
+  font-size: calc(var(--gameAreaWidth) * 0.06);
+  box-shadow: 0 0 0 0 transparent;
+}
+
+button.startButton:hover,
+button.startButton:focus {
+  animation: box-shadow 0.5s;
+  box-shadow: 1px 1px 20px black;
+}
+
+@keyframes box-shadow {
+  0% {
+    box-shadow: none;
+  }
+}
+
 .card {
   background-color: skyblue;
   height: var(--cardHeight);

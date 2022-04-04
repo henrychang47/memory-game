@@ -1,8 +1,10 @@
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },
-  { row: 4, column: 4, memoryTime: 10, pairingTime: 20 }
+  { row: 4, column: 4, memoryTime: 10, pairingTime: 40 },
+  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 },
+  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 },
+  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 }
 ];
 
 class Deck {
@@ -92,20 +94,22 @@ class Card {
 }
 
 const gameController = {
-  CURRENT_LEVEL: 0,
+  CURRENT_LEVEL: 1,
   currentGame: null,
   timeText: document.querySelector('.timeText'),
   levelText: document.querySelector('.levelText'),
 
 
-  startGame: function () {
-    let { row, column, pairingTime } = levelData[this.CURRENT_LEVEL];
+  startGame: function (setLevel = 1) {
+    this.CURRENT_LEVEL = setLevel;
+    this.clearTimer();
+    let { row, column, pairingTime } = levelData[this.CURRENT_LEVEL - 1];
     this.showMiddleMessage(`LEVEL ${this.CURRENT_LEVEL} <br> ${row} x ${column} ${pairingTime}s`);
     this.setLevelText('LEVEL ' + this.CURRENT_LEVEL);
 
     setTimeout(() => {
       this.showMiddleMessage('');
-      this.currentGame = new Game(levelData[this.CURRENT_LEVEL]);
+      this.currentGame = new Game(levelData[this.CURRENT_LEVEL - 1]);
       this.currentGame.start();
     }, 2000);
   },
@@ -153,8 +157,10 @@ const gameController = {
       this.showMiddleMessage("FAILED..");
 
       setTimeout(() => {
-        this.showMiddleMessage("ALL CLEAR!!");
-        this.startGame();
+        Deck.displayArea.innerHTML = "<button class='startButton'>RESTART</button>";
+        document.querySelector('.startButton').addEventListener('click', () => {
+          gameController.startGame();
+        });
       }, 2000);
     }
   },
@@ -201,13 +207,10 @@ class Game {
   }
 
   startMemory() {
-    console.log('start memory');
     gameController.setTimer(this.MEMORY_TIME, this.startPairing, this);
   }
 
   startPairing() {
-    console.log('start Pairing!');
-
     this.PLAYER_ACTIVE = true;
     this.deck.hideAll();
 
@@ -215,8 +218,6 @@ class Game {
   }
 
   timeUP() {
-    console.log('time up!');
-
     setTimeout(() => {
       this.deck.showAll();
       gameController.endGame();
@@ -296,6 +297,6 @@ const sounds = new class {
   }
 }
 
-window.onload = function () {
+document.querySelector('.startButton').addEventListener('click', () => {
   gameController.startGame();
-};
+});
