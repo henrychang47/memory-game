@@ -1,8 +1,8 @@
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 4, column: 4, memoryTime: 10, pairingTime: 40 },
-  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 },
+  { row: 2, column: 2, memoryTime: 5, pairingTime: 1000 },
+  { row: 4, column: 4, memoryTime: 10, pairingTime: 50 },
   { row: 6, column: 6, memoryTime: 10, pairingTime: 60 },
   { row: 6, column: 6, memoryTime: 10, pairingTime: 60 }
 ];
@@ -150,8 +150,7 @@ const gameController = {
 
       setTimeout(() => {
         this.showMiddleMessage("");
-        this.CURRENT_LEVEL++;
-        this.startGame();
+        this.startGame(++this.CURRENT_LEVEL);
       }, 2000);
     } else {
       this.showMiddleMessage("FAILED..");
@@ -226,7 +225,7 @@ class Game {
 
   select(card) {
     if (!this.PLAYER_ACTIVE) return;
-    if (!card.element.classList.value) return;// card been paired
+    if (card.removed) return;// card been paired
     if (this.FIRST_SELECTED === card) return; // avoid self paired
 
     if (!this.FIRST_SELECTED) {
@@ -259,13 +258,19 @@ class Game {
   }
 
   removeSelectedPair() {
-    this.FIRST_SELECTED.removed = true;
-    this.SECOND_SELECTED.removed = true;
+    let firstPaired = this.FIRST_SELECTED;
+    let secondPaired = this.SECOND_SELECTED;
+    this.clearSelect();
+
+    firstPaired.removed = true;
+    secondPaired.removed = true;
+    firstPaired.element.classList.add('fade');
+    secondPaired.element.classList.add('fade');
+
     setTimeout(() => {
-      this.FIRST_SELECTED.element.classList = '';
-      this.SECOND_SELECTED.element.classList = '';
-      this.clearSelect();
-    }, 500);
+      firstPaired.element.classList = '';
+      secondPaired.element.classList = '';
+    }, 1000);
   }
 
   checkFinish() {
