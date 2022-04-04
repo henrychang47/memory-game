@@ -1,8 +1,11 @@
 :root {
+  --sideBarWidth: 20vw;
+  --gameAreaWidth: calc(100vw - var(--sideBarWidth));
+
   --row: 4;
   --column: 4;
-  --cardHeight: 200px;
-  --cardWidth: 180px;
+  --cardHeight: calc(100vh / var(--row) * 0.8);
+  --cardWidth: var(--cardHeight);
 }
 
 * {
@@ -13,37 +16,43 @@
 
 body {
   height: 100vh;
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--sideBarWidth) var(--gameAreaWidth);
   align-items: center;
-  justify-content: center;
 }
 
-.infos {
-  position: absolute;
-  width: 100vw;
-  top: 30px;
-  display: flex;
-  font-size: 6rem;
-  justify-content: space-between;
+.sideBar {
+  box-sizing: border-box;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  padding: 20px;
+  padding-right: 0;
 }
 
 .title {
-  margin-left: 30px;
+  font-size: calc(var(--sideBarWidth) / 5);
 }
 
-.timer {}
+.timeText {
+  font-size: calc(var(--sideBarWidth) / 2);
+  align-self: center;
+  justify-self: center;
+}
 
 .message {
-  margin-right: 30px;
+  font-size: calc(var(--sideBarWidth) / 5);
+  align-self: end;
 }
 
 .cardsArea {
-  position: relative;
-  top: 30px;
+  flex-grow: 1;
+  justify-content: center;
+
   display: grid;
   grid-template-columns: repeat(var(--column), var(--cardWidth));
   grid-template-rows: repeat(var(--row), var(--cardHeight));
-  gap: 20px 30px;
+  gap: 20px;
 }
 
 .card {
@@ -58,6 +67,8 @@ body {
 .card.hide {
   background: linear-gradient(#e66465, #9198e5);
 }
+
+/* icons */
 
 .heart {
   background-image: url(./img/heart.png);

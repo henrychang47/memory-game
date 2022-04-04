@@ -1,8 +1,8 @@
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 2, column: 2, cardHeight: 200, cardWidth: 180, memoryTime: 5, pairingTime: 10 },
-  { row: 4, column: 4, cardHeight: 200, cardWidth: 180, memoryTime: 10, pairingTime: 20 }
+  { row: 6, column: 6, memoryTime: 5, pairingTime: 10 },
+  { row: 4, column: 4, memoryTime: 10, pairingTime: 20 }
 ];
 
 class Deck {
@@ -94,7 +94,7 @@ class Card {
 const gameController = {
   CURRENT_LEVEL: 0,
   currentGame: null,
-  timeText: document.querySelector('.timer'),
+  timeText: document.querySelector('.timeText'),
   messageText: document.querySelector('.message'),
 
 
@@ -148,7 +148,7 @@ const gameController = {
 
 class Game {
   constructor(gameConfig) {
-    let { row, column, cardHeight, cardWidth, memoryTime, pairingTime } = gameConfig;
+    let { row, column, memoryTime, pairingTime } = gameConfig;
 
     this.MEMORY_TIME = memoryTime;
     this.PAIRING_TIME = pairingTime;
@@ -156,17 +156,15 @@ class Game {
     this.SECOND_SELECTED = null;
     this.PLAYER_ACTIVE = false;
 
-    this.setDisplayArea(row, column, cardHeight, cardWidth);
+    this.setDisplayArea(row, column);
     this.deck = new Deck(row, column);
   }
 
-  setDisplayArea(row, column, height, width) {
+  setDisplayArea(row, column) {
     let style = document.documentElement.style;
 
     style.setProperty("--row", row);
     style.setProperty("--column", column);
-    style.setProperty("--cardWidth", `${width}px`);
-    style.setProperty("--cardHeight", `${height}px`);
   }
 
   checkSameType() {
@@ -277,9 +275,6 @@ const sounds = new class {
     if (type === 'wrong') this.wrongSound.play();
   }
 }
-
-
-
 
 window.onload = function () {
   gameController.startGame();
