@@ -1,12 +1,12 @@
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 6, column: 6, memoryTime: 5, pairingTime: 10 },
+  { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },
   { row: 4, column: 4, memoryTime: 10, pairingTime: 20 }
 ];
 
 class Deck {
-  static displayArea = document.querySelector('.cardsArea');
+  static displayArea = document.querySelector('.gameArea');
 
   constructor(row, column) {
     this.cardStack = [];
@@ -95,17 +95,23 @@ const gameController = {
   CURRENT_LEVEL: 0,
   currentGame: null,
   timeText: document.querySelector('.timeText'),
-  messageText: document.querySelector('.message'),
+  levelText: document.querySelector('.levelText'),
 
 
   startGame: function () {
-    this.setMessage('LEVEL ' + this.CURRENT_LEVEL);
-    this.currentGame = new Game(levelData[this.CURRENT_LEVEL]);
-    this.currentGame.start();
+    let { row, column, pairingTime } = levelData[this.CURRENT_LEVEL];
+    this.showMiddleMessage(`LEVEL ${this.CURRENT_LEVEL} <br> ${row} x ${column} ${pairingTime}s`);
+    this.setLevelText('LEVEL ' + this.CURRENT_LEVEL);
+
+    setTimeout(() => {
+      this.showMiddleMessage('');
+      this.currentGame = new Game(levelData[this.CURRENT_LEVEL]);
+      this.currentGame.start();
+    }, 2000);
   },
 
-  setMessage: function (msg) {
-    this.messageText.innerText = msg;
+  setLevelText: function (msg) {
+    this.levelText.innerText = msg;
   },
 
   setTimer: function (second, callback, caller) {
@@ -133,17 +139,31 @@ const gameController = {
 
   endGame: function (allClear) {
     this.currentGame = null;
-    Deck.displayArea.innerHTML = "";
     this.clearTimer();
 
     if (allClear) {
-      this.CURRENT_LEVEL++;
-      this.startGame();
-    } else {
-      this.startGame();
-    }
-  }
+      this.showMiddleMessage("ALL CLEAR!!");
 
+      setTimeout(() => {
+        this.showMiddleMessage("");
+        this.CURRENT_LEVEL++;
+        this.startGame();
+      }, 2000);
+    } else {
+      this.showMiddleMessage("FAILED..");
+
+      setTimeout(() => {
+        this.showMiddleMessage("ALL CLEAR!!");
+        this.startGame();
+      }, 2000);
+    }
+  },
+
+  showMiddleMessage(message) {
+    document.documentElement.style.setProperty("--row", 1);
+    document.documentElement.style.setProperty("--column", 1);
+    Deck.displayArea.innerHTML = message;
+  },
 }
 
 class Game {

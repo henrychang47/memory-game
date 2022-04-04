@@ -2,8 +2,8 @@
   --sideBarWidth: 20vw;
   --gameAreaWidth: calc(100vw - var(--sideBarWidth));
 
-  --row: 4;
-  --column: 4;
+  --row: 1;
+  --column: 1;
   --cardHeight: calc(100vh / var(--row) * 0.8);
   --cardWidth: var(--cardHeight);
 }
@@ -40,12 +40,12 @@ body {
   justify-self: center;
 }
 
-.message {
+.levelText {
   font-size: calc(var(--sideBarWidth) / 5);
   align-self: end;
 }
 
-.cardsArea {
+.gameArea {
   flex-grow: 1;
   justify-content: center;
 
@@ -53,6 +53,10 @@ body {
   grid-template-columns: repeat(var(--column), var(--cardWidth));
   grid-template-rows: repeat(var(--row), var(--cardHeight));
   gap: 20px;
+
+  font-size: 10rem;
+  text-align: center;
+  align-items: center;
 }
 
 .card {
