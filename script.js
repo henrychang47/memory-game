@@ -1,18 +1,15 @@
-const cardsArea = document.querySelector('.cardsArea');
-const timeText = document.querySelector('.timer');
-const message = document.querySelector('.message');
-
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 2, column: 2, cardHeight: 200, cardWidth: 180, },
-  { row: 4, column: 4, cardHeight: 200, cardWidth: 180, }
+  { row: 2, column: 2, cardHeight: 200, cardWidth: 180, memoryTime: 5, pairingTime: 10 },
+  { row: 4, column: 4, cardHeight: 200, cardWidth: 180, memoryTime: 10, pairingTime: 20 }
 ];
 
-const cardController = {
-  cardStack: [],
+class Deck {
+  static displayArea = document.querySelector('.cardsArea');
 
-  createCards: function (row, column) {
+  constructor(row, column) {
+    this.cardStack = [];
 
     for (let i = 0; i < row * column; i++) {
       let newCard = new Card(cardTypes[parseInt(i / 2)]);
@@ -20,37 +17,36 @@ const cardController = {
       this.cardStack.push(newCard);
     }
 
-    this.shuffleCards();
-    this.printCards();
-  },
+    this.shuffle();
+    this.printTo(Deck.displayArea);
+  }
 
-  shuffleCards: function () {
+  shuffle() {
     let stack = this.cardStack;
 
     for (let i = stack.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
       [stack[i], stack[j]] = [stack[j], stack[i]];
     }
-  },
+  }
 
-  printCards: function () {
+  printTo(targetElement) {
     this.cardStack.forEach((card) => {
-      cardsArea.appendChild(card.element);
+      targetElement.appendChild(card.element);
     });
-  },
+  }
 
-  showAllCards: function () {
+  showAll() {
     this.cardStack.forEach(card => {
       card.flip('show');
     });
-  },
+  }
 
-  hideAllCards: function () {
+  hideAll() {
     this.cardStack.forEach(card => {
       card.flip('hide');
     });
-  },
-
+  }
 }
 
 class Card {
@@ -89,186 +85,200 @@ class Card {
   }
 
   click() {
-    gameController.select(this);
+    gameController.currentGame.select(this);
   }
 
 
 }
 
-const gameStatus = {
-  PLAYER_ACTIVE: false,
-  MEMORY_TIME: 5,
-  PAIRING_TIME: 10,
+const gameController = {
   CURRENT_LEVEL: 0,
-  FIRST_SELECTED: null,
-  SECOND_SELECTED: null,
+  currentGame: null,
+  timeText: document.querySelector('.timer'),
+  messageText: document.querySelector('.message'),
 
-  checkSameType: function () {
-    return this.FIRST_SELECTED.type === this.SECOND_SELECTED.type;
+
+  startGame: function () {
+    this.setMessage('LEVEL ' + this.CURRENT_LEVEL);
+    this.currentGame = new Game(levelData[this.CURRENT_LEVEL]);
+    this.currentGame.start();
   },
 
-  clearSelect: function () {
-    this.FIRST_SELECTED = null;
-    this.SECOND_SELECTED = null;
+  setMessage: function (msg) {
+    this.messageText.innerText = msg;
   },
+
+  setTimer: function (second, callback, caller) {
+    let count = second;
+    this.timeText.innerText = second;
+
+    let intervalId = secondsTimer = setInterval(() => {
+      this.timeText.innerText = --count;
+    }, 1000);
+
+    let timeoutId = setTimeout(() => {
+      callback.call(caller);
+      clearInterval(intervalId);
+    }, second * 1000);
+
+    this.lastInterval = intervalId;
+    this.lastTimeout = timeoutId;
+  },
+
+  clearTimer: function () {
+    clearInterval(this.lastInterval);
+    clearTimeout(this.lastTimeout);
+    this.timeText.innerText = '';
+  },
+
+  endGame: function (allClear) {
+    this.currentGame = null;
+    Deck.displayArea.innerHTML = "";
+    this.clearTimer();
+
+    if (allClear) {
+      this.CURRENT_LEVEL++;
+      this.startGame();
+    } else {
+      this.startGame();
+    }
+  }
 
 }
 
-const gameController = {
+class Game {
+  constructor(gameConfig) {
+    let { row, column, cardHeight, cardWidth, memoryTime, pairingTime } = gameConfig;
 
-  startGame: function () {
-    let { row, column, cardHeight, cardWidth, } = levelData[gameStatus.CURRENT_LEVEL]
+    this.MEMORY_TIME = memoryTime;
+    this.PAIRING_TIME = pairingTime;
+    this.FIRST_SELECTED = null;
+    this.SECOND_SELECTED = null;
+    this.PLAYER_ACTIVE = false;
 
-    setMessage('LEVEL ' + gameStatus.CURRENT_LEVEL);
-    this.setCardArea(row, column, cardHeight, cardWidth);
+    this.setDisplayArea(row, column, cardHeight, cardWidth);
+    this.deck = new Deck(row, column);
+  }
 
-    cardController.createCards(row, column);
-    cardController.showAllCards();
-
-    this.startMemory();
-  },
-
-  setCardArea: function (row, column, height, width) {
+  setDisplayArea(row, column, height, width) {
     let style = document.documentElement.style;
 
     style.setProperty("--row", row);
     style.setProperty("--column", column);
     style.setProperty("--cardWidth", `${width}px`);
     style.setProperty("--cardHeight", `${height}px`);
-  },
+  }
 
-  setTimer: function (second, callback) {
+  checkSameType() {
+    return this.FIRST_SELECTED.type === this.SECOND_SELECTED.type;
+  }
 
-    let count = second;
-    timeText.innerText = second;
+  clearSelect() {
+    this.FIRST_SELECTED = null;
+    this.SECOND_SELECTED = null;
+  }
 
-    let intervalId = secondsTimer = setInterval(() => {
-      timeText.innerText = --count;
-    }, 1000);
+  start() {
+    this.startMemory();
+  }
 
-    let timeoutId = setTimeout(() => {
-      callback.call(this);
-      clearInterval(intervalId);
-    }, second * 1000);
+  startMemory() {
+    console.log('start memory');
+    gameController.setTimer(this.MEMORY_TIME, this.startPairing, this);
+  }
 
-    gameStatus.intervalId = intervalId;
-    gameStatus.timeoutId = timeoutId;
-  },
-
-  clearTimer: function () {
-    clearInterval(gameStatus.intervalId);
-    clearTimeout(gameStatus.timeoutId);
-  },
-
-  startMemory: function () {
-    console.log('start Memory!');
-    this.setTimer(gameStatus.MEMORY_TIME, this.startPairing);
-  },
-
-  startPairing: function () {
-    gameStatus.PLAYER_ACTIVE = true;
-    cardController.hideAllCards();
-
-    this.setTimer(gameStatus.PAIRING_TIME, this.timeUP);
-
+  startPairing() {
     console.log('start Pairing!');
-  },
 
-  timeUP: function () {
-    gameStatus.PLAYER_ACTIVE = false;
-    timeText.style.color = 'red';
+    this.PLAYER_ACTIVE = true;
+    this.deck.hideAll();
+
+    gameController.setTimer(this.PAIRING_TIME, this.timeUP, this);
+  }
+
+  timeUP() {
+    console.log('time up!');
 
     setTimeout(() => {
-      cardController.showAllCards();
+      this.deck.showAll();
+      gameController.endGame();
     }, 500);
+  }
 
-    console.log('time up!');
-  },
-
-  select: function (card) {
-    if (!gameStatus.PLAYER_ACTIVE) return;
+  select(card) {
+    if (!this.PLAYER_ACTIVE) return;
     if (!card.element.classList.value) return;// card been paired
-    if (gameStatus.FIRST_SELECTED === card) return; // avoid self paired
+    if (this.FIRST_SELECTED === card) return; // avoid self paired
 
-    if (!gameStatus.FIRST_SELECTED) {
-      gameStatus.FIRST_SELECTED = card;
+    if (!this.FIRST_SELECTED) {
+      this.FIRST_SELECTED = card;
       card.element.classList.remove('hide');
       return;
     }
 
-    if (!gameStatus.SECOND_SELECTED) {
-      gameStatus.SECOND_SELECTED = card;
+    if (!this.SECOND_SELECTED) {
+      this.SECOND_SELECTED = card;
       card.element.classList.remove('hide');
 
       this.checkPair();
     }
-  },
+  }
 
-  checkPair: function () {
-    if (gameStatus.checkSameType()) {
+  checkPair() {
+    if (this.checkSameType()) {
       sounds.play('correct');
-
-      gameStatus.FIRST_SELECTED.removed = true;
-      gameStatus.SECOND_SELECTED.removed = true;
-      setTimeout(() => {
-        gameStatus.FIRST_SELECTED.element.classList = '';
-        gameStatus.SECOND_SELECTED.element.classList = '';
-        gameStatus.clearSelect();
-      }, 500);
-
+      this.removeSelectedPair();
       this.checkFinish();
     } else {
       sounds.play('wrong');
       setTimeout(() => {
-        gameStatus.FIRST_SELECTED.element.classList.add('hide');
-        gameStatus.SECOND_SELECTED.element.classList.add('hide');
-        gameStatus.clearSelect();
+        this.FIRST_SELECTED.element.classList.add('hide');
+        this.SECOND_SELECTED.element.classList.add('hide');
+        this.clearSelect();
       }, 500);
     }
+  }
 
-  },
+  removeSelectedPair() {
+    this.FIRST_SELECTED.removed = true;
+    this.SECOND_SELECTED.removed = true;
+    setTimeout(() => {
+      this.FIRST_SELECTED.element.classList = '';
+      this.SECOND_SELECTED.element.classList = '';
+      this.clearSelect();
+    }, 500);
+  }
 
-  checkFinish: function () {
+  checkFinish() {
     let finish = true;
-    cardController.cardStack.forEach(card => {
+    this.deck.cardStack.forEach(card => {
       if (!card.removed) {
         finish = false;
       }
     });
 
     if (finish) {
-      this.endGame();
+      gameController.endGame(true);
     }
-  },
-
-  endGame: function () {
-    cardController.cardStack = [];
-    cardsArea.innerHTML = "";
-    gameController.clearTimer();
-    gameStatus.PLAYER_ACTIVE = false;
-    timeText.innerText = '';
-
-    if (gameStatus.CURRENT_LEVEL < 1) {
-      gameStatus.CURRENT_LEVEL++;
-    }
-
-    gameController.startGame();
-  },
+  }
 
 }
 
-const sounds = {
-  correctSound: new Audio('./sound/correct.mp3'),
-  wrongSound: new Audio('./sound/wrong.mp3'),
-  play: function (type) {
+const sounds = new class {
+  constructor() {
+    this.correctSound = new Audio('./sound/correct.mp3');
+    this.wrongSound = new Audio('./sound/wrong.mp3');
+
+    this.wrongSound.volume = 0.2;
+  }
+
+  play(type) {
     if (type === 'correct') this.correctSound.play();
     if (type === 'wrong') this.wrongSound.play();
   }
 }
 
-const setMessage = function (msg) {
-  message.innerText = msg;
-}
+
 
 
 window.onload = function () {
