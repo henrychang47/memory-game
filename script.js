@@ -1,4 +1,4 @@
-const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
+const cardTypes = ['pet', 'heart', 'blur', 'bar', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
   { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },

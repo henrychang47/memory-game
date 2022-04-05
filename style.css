@@ -26,7 +26,7 @@ body {
   height: 100vh;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
-  padding: 20px;
+  padding: 15px;
   padding-right: 0;
 }
 
@@ -56,7 +56,7 @@ body {
   grid-template-rows: repeat(var(--row), var(--cardHeight));
   gap: 20px;
 
-  font-size: 10rem;
+  font-size: 7rem;
   text-align: center;
   align-items: center;
 }
@@ -66,7 +66,7 @@ button.startButton {
   color: black;
   background-color: white;
   padding: 20px;
-  border: 10px solid black;
+  border: 7px solid black;
   font-size: calc(var(--gameAreaWidth) * 0.06);
   box-shadow: 0 0 0 0 transparent;
   cursor: pointer;
@@ -85,10 +85,11 @@ button.startButton:focus {
   background-color: transparent;
   height: var(--cardHeight);
   width: var(--cardWidth);
-  border: 10px solid black;
+  border: 6px solid black;
   border-radius: 20px;
   background-repeat: no-repeat;
   background-position: center;
+  background-size: 45%;
 }
 
 .card:hover {
