@@ -1,10 +1,14 @@
-const cardTypes = ['pet', 'heart', 'blur', 'bar', 'pokemon', 'chair', 'star', 'puzzle'];
+const cardTypes = [
+  'pet', 'heart', 'blur', 'bar', 'pokemon', 'star', 'puzzle',
+  'lightbulb', 'hot', 'rocket', 'dashboard', 'cruelty_free',
+  'cookie', 'volleyball', 'anchor', 'flower', 'support', 'pix'
+];
 
 const levelData = [
   { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },
   { row: 4, column: 4, memoryTime: 10, pairingTime: 50 },
-  { row: 6, column: 6, memoryTime: 15, pairingTime: 60 },
-  { row: 6, column: 6, memoryTime: 10, pairingTime: 40 }
+  { row: 6, column: 6, memoryTime: 15, pairingTime: 80 },
+  { row: 6, column: 6, memoryTime: 15, pairingTime: 60 }
 ];
 
 class Deck {

@@ -32,7 +32,6 @@ body {
 
 .title {
   font-size: calc(var(--sideBarWidth) / 5);
-  font-weight: 600;
   opacity: 0;
   transition: opacity 2s;
 }
@@ -55,7 +54,7 @@ body {
   display: grid;
   grid-template-columns: repeat(var(--column), var(--cardWidth));
   grid-template-rows: repeat(var(--row), var(--cardHeight));
-  gap: 20px;
+  gap: 12px;
 
   font-size: 7rem;
   text-align: center;
@@ -130,8 +129,8 @@ button.startButton:focus {
   background-image: url(./img/pokemon.png);
 }
 
-.chair {
-  background-image: url(./img/chair.png);
+.dashboard {
+  background-image: url(./img/dashboard.png);
 }
 
 .star {
@@ -140,4 +139,44 @@ button.startButton:focus {
 
 .puzzle {
   background-image: url(./img/puzzle.png);
+}
+
+.hot {
+  background-image: url(./img/hot.png);
+}
+
+.cookie {
+  background-image: url(./img/cookie.png);
+}
+
+.flower {
+  background-image: url(./img/flower.png);
+}
+
+.lightbulb {
+  background-image: url(./img/lightbulb.png);
+}
+
+.rocket {
+  background-image: url(./img/rocket.png);
+}
+
+.cruelty_free {
+  background-image: url(./img/cruelty_free.png);
+}
+
+.volleyball {
+  background-image: url(./img/volleyball.png);
+}
+
+.anchor {
+  background-image: url(./img/anchor.png);
+}
+
+.support {
+  background-image: url(./img/support.png);
+}
+
+.pix {
+  background-image: url(./img/pix.png);
 }
