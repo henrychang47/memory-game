@@ -1,10 +1,10 @@
 const cardTypes = ['heart', 'blur', 'bar', 'pet', 'pokemon', 'chair', 'star', 'puzzle'];
 
 const levelData = [
-  { row: 2, column: 2, memoryTime: 5, pairingTime: 1000 },
+  { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },
   { row: 4, column: 4, memoryTime: 10, pairingTime: 50 },
-  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 },
-  { row: 6, column: 6, memoryTime: 10, pairingTime: 60 }
+  { row: 6, column: 6, memoryTime: 15, pairingTime: 60 },
+  { row: 6, column: 6, memoryTime: 10, pairingTime: 40 }
 ];
 
 class Deck {
@@ -154,9 +154,9 @@ const gameController = {
       }, 2000);
     } else {
       this.showMiddleMessage("FAILED..");
-
       setTimeout(() => {
         Deck.displayArea.innerHTML = "<button class='startButton'>RESTART</button>";
+        document.querySelector('.startButton').style.opacity = 1;
         document.querySelector('.startButton').addEventListener('click', () => {
           gameController.startGame();
         });
@@ -282,6 +282,7 @@ class Game {
     });
 
     if (finish) {
+      sounds.play('correct');
       gameController.endGame(true);
     }
   }
@@ -297,11 +298,26 @@ const sounds = new class {
   }
 
   play(type) {
-    if (type === 'correct') this.correctSound.play();
-    if (type === 'wrong') this.wrongSound.play();
+    if (type === 'correct') {
+      this.correctSound.currentTime = 0;
+      this.correctSound.play();
+    }
+    if (type === 'wrong') {
+      this.wrongSound.currentTime = 0;
+      this.wrongSound.play();
+    }
   }
 }
 
-document.querySelector('.startButton').addEventListener('click', () => {
-  gameController.startGame();
-});
+window.onload = function () {
+  document.querySelector('.title').style.opacity = 1;
+
+  setTimeout(() => {
+    document.querySelector('.startButton').style.opacity = 1;
+  }, 1000)
+
+  document.querySelector('.startButton').addEventListener('click', () => {
+    gameController.startGame();
+  });
+}
+

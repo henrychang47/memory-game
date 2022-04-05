@@ -32,6 +32,8 @@ body {
 
 .title {
   font-size: calc(var(--sideBarWidth) / 5);
+  opacity: 0;
+  transition: opacity 2s;
 }
 
 .timeText {
@@ -68,6 +70,8 @@ button.startButton {
   font-size: calc(var(--gameAreaWidth) * 0.06);
   box-shadow: 0 0 0 0 transparent;
   cursor: pointer;
+  opacity: 0;
+  transition: opacity 2s;
 }
 
 button.startButton:hover,
