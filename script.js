@@ -11,6 +11,12 @@ const levelData = [
   { row: 6, column: 6, memoryTime: 15, pairingTime: 60 }
 ];
 
+const colors = {
+  2: ["#00ffcc", "#ccccff", "#ff99cc"],
+  4: ["#00ffcc", "#66ffff", "#ccccff", "#ff99ff", "#ff99cc"],
+  6: ["#00ffcc", "#66ffff", "#ccccff", "#ff99ff", "#ff99cc", "#ffcc99", "#ccff99"]
+};
+
 class Deck {
   static displayArea = document.querySelector('.gameArea');
 
@@ -19,11 +25,11 @@ class Deck {
 
     for (let i = 0; i < row * column; i++) {
       let newCard = new Card(cardTypes[parseInt(i / 2)]);
-
       this.cardStack.push(newCard);
     }
 
     this.shuffle();
+    this.paintBacksides(column);
     this.printTo(Deck.displayArea);
   }
 
@@ -52,6 +58,13 @@ class Deck {
     this.cardStack.forEach(card => {
       card.flip('hide');
     });
+  }
+
+  paintBacksides(size) {
+    for (let i = 0; i < size ** 2; i++) {
+      this.cardStack[i].element.style.setProperty('--color1', colors[size][i % size]);
+      this.cardStack[i].element.style.setProperty('--color2', colors[size][(i % size) + 1]);
+    }
   }
 }
 
@@ -93,8 +106,6 @@ class Card {
   click() {
     gameController.currentGame.select(this);
   }
-
-
 }
 
 const gameController = {

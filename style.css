@@ -99,7 +99,9 @@ button.startButton:focus {
 }
 
 .card.hide {
-  background: linear-gradient(#CCFFFF, #FFCCFF);
+  /* --color1: #CCFFFF;
+  --color2: #FFCCFF; */
+  background: linear-gradient(to right, var(--color1), var(--color2));
 }
 
 .fade {
