@@ -47,6 +47,28 @@ body {
   align-self: end;
 }
 
+.levelButtons {
+  display: flex;
+  gap: calc(var(--sideBarWidth) / 2.3);
+  margin-top: -10px;
+  background-color: transparent;
+}
+
+.prevLevelButton,
+.nextLevelButton {
+  display: none;
+  border: none;
+  background-color: white;
+  font-size: calc(var(--sideBarWidth) / 12);
+  background-color: transparent;
+}
+
+.prevLevelButton:hover,
+.nextLevelButton:hover {
+  color: white;
+  text-shadow: 0 0 5px black;
+}
+
 .gameArea {
   flex-grow: 1;
   justify-content: center;

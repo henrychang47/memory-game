@@ -108,14 +108,18 @@ class Card {
   }
 }
 
-const gameController = {
-  CURRENT_LEVEL: 1,
-  currentGame: null,
-  timeText: document.querySelector('.timeText'),
-  levelText: document.querySelector('.levelText'),
+const gameController = new class {
+  constructor() {
+    this.CURRENT_LEVEL = 1;
+    this.currentGame = null;
+    this.timeText = document.querySelector('.timeText');
+    this.levelText = document.querySelector('.levelText');
+    this.prevButton = document.querySelector('.prevLevelButton');
+    this.nextButton = document.querySelector('.nextLevelButton');
+    this.addLevelListener();
+  }
 
-
-  startGame: function (setLevel = 1) {
+  startGame(setLevel = 1) {
     this.CURRENT_LEVEL = setLevel;
     this.clearTimer();
     let { row, column, pairingTime } = levelData[this.CURRENT_LEVEL - 1];
@@ -127,17 +131,20 @@ const gameController = {
       this.currentGame = new Game(levelData[this.CURRENT_LEVEL - 1]);
       this.currentGame.start();
     }, 2000);
-  },
+  }
 
-  setLevelText: function (msg) {
+  setLevelText(msg) {
     this.levelText.innerText = msg;
-  },
+    this.prevButton.style.display = 'inline';
+    this.nextButton.style.display = 'inline';
+  }
 
-  setTimer: function (second, callback, caller) {
+  setTimer(second, callback, caller) {
+    this.clearTimer();
     let count = second;
     this.timeText.innerText = second;
 
-    let intervalId = secondsTimer = setInterval(() => {
+    let intervalId = setInterval(() => {
       this.timeText.innerText = --count;
     }, 1000);
 
@@ -148,15 +155,15 @@ const gameController = {
 
     this.lastInterval = intervalId;
     this.lastTimeout = timeoutId;
-  },
+  }
 
-  clearTimer: function () {
+  clearTimer() {
     clearInterval(this.lastInterval);
     clearTimeout(this.lastTimeout);
     this.timeText.innerText = '';
-  },
+  }
 
-  endGame: function (allClear) {
+  endGame(allClear) {
     this.currentGame = null;
     this.clearTimer();
 
@@ -177,13 +184,43 @@ const gameController = {
         });
       }, 2000);
     }
-  },
+  }
 
   showMiddleMessage(message) {
     document.documentElement.style.setProperty("--row", 1);
     document.documentElement.style.setProperty("--column", 1);
     Deck.displayArea.innerHTML = message;
-  },
+  }
+
+  prevLevel = () => {
+    if (this.CURRENT_LEVEL > 1) {
+      this.removeLevelListener();
+      this.CURRENT_LEVEL--;
+      this.endGame();
+      this.startGame(this.CURRENT_LEVEL);
+      this.addLevelListener();
+    }
+  }
+
+  nextLevel = () => {
+    if (this.CURRENT_LEVEL < levelData.length) {
+      this.removeLevelListener();
+      this.CURRENT_LEVEL++;
+      this.endGame();
+      this.startGame(this.CURRENT_LEVEL);
+      this.addLevelListener();
+    }
+  }
+
+  addLevelListener() {
+    this.prevButton.addEventListener('click', this.prevLevel);
+    this.nextButton.addEventListener('click', this.nextLevel);
+  }
+
+  removeLevelListener() {
+    this.prevButton.removeEventListener('click', this.prevLevel);
+    this.nextButton.removeEventListener('click', this.nextLevel);
+  }
 }
 
 class Game {
