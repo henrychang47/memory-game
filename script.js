@@ -8,7 +8,8 @@ const levelData = [
   { row: 2, column: 2, memoryTime: 5, pairingTime: 10 },
   { row: 4, column: 4, memoryTime: 10, pairingTime: 50 },
   { row: 6, column: 6, memoryTime: 15, pairingTime: 80 },
-  { row: 6, column: 6, memoryTime: 15, pairingTime: 60 }
+  { row: 6, column: 6, memoryTime: 15, pairingTime: 60 },
+  { row: 6, column: 6, memoryTime: 0, pairingTime: 60 }
 ];
 
 const colors = {
@@ -116,7 +117,8 @@ const gameController = new class {
     this.levelText = document.querySelector('.levelText');
     this.prevButton = document.querySelector('.prevLevelButton');
     this.nextButton = document.querySelector('.nextLevelButton');
-    this.addLevelListener();
+    this.prevButton.addEventListener('click', this.prevLevel);
+    this.nextButton.addEventListener('click', this.nextLevel);
   }
 
   startGame(setLevel = 1) {
@@ -126,7 +128,7 @@ const gameController = new class {
     this.showMiddleMessage(`LEVEL ${this.CURRENT_LEVEL} <br> ${row} x ${column} ${pairingTime}s`);
     this.setLevelText('LEVEL ' + this.CURRENT_LEVEL);
 
-    setTimeout(() => {
+    this.lastGameSetter = setTimeout(() => {
       this.showMiddleMessage('');
       this.currentGame = new Game(levelData[this.CURRENT_LEVEL - 1]);
       this.currentGame.start();
@@ -160,6 +162,7 @@ const gameController = new class {
   clearTimer() {
     clearInterval(this.lastInterval);
     clearTimeout(this.lastTimeout);
+    clearTimeout(this.lastGameSetter);
     this.timeText.innerText = '';
   }
 
@@ -194,32 +197,16 @@ const gameController = new class {
 
   prevLevel = () => {
     if (this.CURRENT_LEVEL > 1) {
-      this.removeLevelListener();
       this.CURRENT_LEVEL--;
-      this.endGame();
       this.startGame(this.CURRENT_LEVEL);
-      this.addLevelListener();
     }
   }
 
   nextLevel = () => {
     if (this.CURRENT_LEVEL < levelData.length) {
-      this.removeLevelListener();
       this.CURRENT_LEVEL++;
-      this.endGame();
       this.startGame(this.CURRENT_LEVEL);
-      this.addLevelListener();
     }
-  }
-
-  addLevelListener() {
-    this.prevButton.addEventListener('click', this.prevLevel);
-    this.nextButton.addEventListener('click', this.nextLevel);
-  }
-
-  removeLevelListener() {
-    this.prevButton.removeEventListener('click', this.prevLevel);
-    this.nextButton.removeEventListener('click', this.nextLevel);
   }
 }
 
@@ -345,7 +332,6 @@ const sounds = new class {
   constructor() {
     this.correctSound = new Audio('./sound/correct.mp3');
     this.wrongSound = new Audio('./sound/wrong.mp3');
-
     this.wrongSound.volume = 0.5;
   }
 
