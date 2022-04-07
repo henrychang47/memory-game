@@ -309,7 +309,7 @@ const sounds = new class {
     this.correctSound = new Audio('./sound/correct.mp3');
     this.wrongSound = new Audio('./sound/wrong.mp3');
 
-    this.wrongSound.volume = 0.2;
+    this.wrongSound.volume = 0.5;
   }
 
   play(type) {
@@ -318,7 +318,7 @@ const sounds = new class {
       this.correctSound.play();
     }
     if (type === 'wrong') {
-      this.wrongSound.currentTime = 0;
+      this.wrongSound.currentTime = 0.65;
       this.wrongSound.play();
     }
   }
