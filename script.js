@@ -170,7 +170,16 @@ const gameController = new class {
     this.currentGame = null;
     this.clearTimer();
 
-    if (allClear) {
+    if (allClear && this.CURRENT_LEVEL == levelData.length) {
+      this.showMiddleMessage("All Finish!!");
+      setTimeout(() => {
+        Deck.displayArea.innerHTML = "<button class='startButton'>RESTART</button>";
+        document.querySelector('.startButton').style.opacity = 1;
+        document.querySelector('.startButton').addEventListener('click', () => {
+          gameController.startGame();
+        });
+      }, 2000);
+    } else if (allClear) {
       this.showMiddleMessage("ALL CLEAR!!");
 
       setTimeout(() => {
