@@ -128,7 +128,7 @@ const gameController = new class {
     this.showMiddleMessage(`LEVEL ${this.CURRENT_LEVEL} <br> ${row} x ${column} ${pairingTime}s`);
     this.setLevelText('LEVEL ' + this.CURRENT_LEVEL);
 
-    this.lastGameSetter = setTimeout(() => {
+    this.startGameTimer = setTimeout(() => {
       this.showMiddleMessage('');
       this.currentGame = new Game(levelData[this.CURRENT_LEVEL - 1]);
       this.currentGame.start();
@@ -162,7 +162,7 @@ const gameController = new class {
   clearTimer() {
     clearInterval(this.lastInterval);
     clearTimeout(this.lastTimeout);
-    clearTimeout(this.lastGameSetter);
+    clearTimeout(this.startGameTimer);
     this.timeText.innerText = '';
   }
 
@@ -182,7 +182,7 @@ const gameController = new class {
     } else if (allClear) {
       this.showMiddleMessage("ALL CLEAR!!");
 
-      setTimeout(() => {
+      this.startGameTimer = setTimeout(() => {
         this.showMiddleMessage("");
         this.startGame(++this.CURRENT_LEVEL);
       }, 2000);
